@@ -1,0 +1,334 @@
+'use client'
+import { Calendar } from '@/components/ui/calendar'
+import { Input } from '@/components/ui/input'
+import { useGetExpCat } from '@/hooks/blog/use-get-catsubcat'
+import { cn } from '@/lib/utils'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { CalendarIcon } from 'lucide-react'
+import { useForm } from 'react-hook-form'
+
+import { Button } from '@/components/ui/button'
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage
+} from '@/components/ui/form'
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger
+} from '@/components/ui/popover'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '@/components/ui/select'
+import api from '@/lib/api'
+import {
+  AddExpenseForm,
+  AddExpenseFormSchema
+} from '@/schemas/add-expense-schema'
+import { format } from 'date-fns'
+
+const getCategoryOptions = (list: string[] | undefined) => {
+  if (!list || !list.length) return []
+
+  return list.map(item => ({
+    id: item.categoryName,
+    label: item.categoryName,
+    value: item.categoryName
+  }))
+}
+
+const getSubCategoryOptions = (
+  expenseCategoryData: string[],
+  selectedcategory: string
+) => {
+  if (!selectedcategory || !selectedcategory.length) return []
+  const cat = expenseCategoryData.filter(
+    cat => cat.categoryName === selectedcategory
+  )
+
+  const subCat = cat[0].subCategory
+  return subCat.map(item => ({
+    id: item,
+    label: item,
+    value: item
+  }))
+}
+
+export default function AddExpense() {
+  const form = useForm<AddExpenseForm>({
+    resolver: zodResolver(AddExpenseFormSchema),
+    defaultValues: {
+      expenseTitle: '',
+      description: '',
+      paymentDate: new Date(),
+      category: '',
+      subCategory: '',
+      amount: '',
+      paymentMethod: '',
+      paymentRemark: '',
+      paidBy: ''
+    }
+  })
+
+  const selectedcategory = form.watch('category')
+  const { data: expCat, isPending, isError, error } = useGetExpCat()
+
+  const expenseCategoryData = expCat?.data.data
+
+  const categories = getCategoryOptions(expenseCategoryData)
+  const subCategories = getSubCategoryOptions(
+    expenseCategoryData,
+    selectedcategory
+  )
+  if (isError) throw new Error(error.message)
+
+  // form is submitted
+  async function handleSubmit(values: AddExpenseForm) {
+    try {
+      const payload = {
+        expenseTitle: values.expenseTitle,
+        description: values.description,
+        paymentDate: values.paymentDate.toISOString(),
+        category: values.category,
+        subCategory: values.subCategory,
+        amount: parseFloat(values.amount),
+        paymentMethod: values.paymentMethod,
+        paymentRemark: values.paymentRemark,
+        paidBy: values.paidBy
+      }
+
+      console.log('payload', payload)
+      const response = await api.post('/expense/add', payload)
+      console.log('response:', response)
+      form.reset()
+      alert('Expense added successfully!')
+    } catch (error) {
+      console.error('error', error)
+    }
+  }
+
+  return (
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(handleSubmit)}>
+        <section className='container space-y-10 py-6'>
+          <h1 className='text-4xl font-bold text-primary'>Add Expense</h1>
+          <Form {...form}>
+            <div className='m-auto grid justify-center items-center w-full grid-cols-3 gap-4'>
+              <FormField
+                control={form.control}
+                name='expenseTitle'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Expense Name</FormLabel>
+                    <FormControl>
+                      <Input placeholder='' {...field} />
+                    </FormControl>
+                    <FormDescription>Please enter the Expense.</FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name='description'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Description</FormLabel>
+                    <FormControl>
+                      <Input placeholder='' {...field} />
+                    </FormControl>
+                    <FormDescription>
+                      Please enter the expense description.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name='paymentDate'
+                render={({ field }) => (
+                  <FormItem className='flex flex-col'>
+                    <FormLabel>Expense Date</FormLabel>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <FormControl>
+                          <Button
+                            variant={'outline'}
+                            className={cn(
+                              'w-[240px] pl-3 text-left font-normal',
+                              !field.value && 'text-muted-foreground'
+                            )}
+                          >
+                            {field.value ? (
+                              format(field.value, 'PPP')
+                            ) : (
+                              <span>Pick the expance date</span>
+                            )}
+                            <CalendarIcon className='ml-auto h-4 w-4 opacity-50' />
+                          </Button>
+                        </FormControl>
+                      </PopoverTrigger>
+                      <PopoverContent className='w-auto p-0' align='start'>
+                        <Calendar
+                          mode='single'
+                          selected={field.value}
+                          onSelect={field.onChange}
+                          disabled={date =>
+                            date > new Date() || date < new Date('1900-01-01')
+                          }
+                          initialFocus
+                        />
+                      </PopoverContent>
+                    </Popover>
+                    <FormDescription>Please enter the Expense.</FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name='category'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Category</FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder='Select a league' />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {categories.map(category => (
+                          <SelectItem key={category.id} value={category.value}>
+                            {category.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormDescription>Please select category.</FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name='subCategory'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Sub Category</FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                      disabled={isPending || isError}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue
+                            placeholder={
+                              isPending ? 'Loading...' : 'Select a team'
+                            }
+                          />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {subCategories?.map(teamOption => (
+                          <SelectItem
+                            key={teamOption.id}
+                            value={teamOption.value}
+                          >
+                            {teamOption.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormDescription>Please select subcategory.</FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name='amount'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Amount</FormLabel>
+                    <FormControl>
+                      <Input type='number' placeholder='' {...field} />
+                    </FormControl>
+                    <FormDescription>Please enter the amount.</FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name='paidBy'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Paid by</FormLabel>
+                    <FormControl>
+                      <Input placeholder='' {...field} />
+                    </FormControl>
+                    <FormDescription>Please enter the paid by.</FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name='paymentMethod'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Payment Method</FormLabel>
+                    <FormControl>
+                      <Input placeholder='' {...field} />
+                    </FormControl>
+                    <FormDescription>
+                      Please enter the payment method.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name='paymentRemark'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Payment Remark</FormLabel>
+                    <FormControl>
+                      <Input placeholder='' {...field} />
+                    </FormControl>
+                    <FormDescription>
+                      Please enter the payment remark.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+          </Form>
+          <div className='flex justify-end'>
+            <Button type='submit'>Submit</Button>
+          </div>
+        </section>
+      </form>
+    </Form>
+  )
+}
