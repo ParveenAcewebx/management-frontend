@@ -25,6 +25,8 @@ import { SearchIcon } from 'lucide-react'
 import { Dispatch, SetStateAction, useMemo, useState } from 'react'
 import { TablePagination } from './table-pagination'
 import { TableViewOptions } from './table-view-options'
+import DateRangePicker from '@/components/date-range-picker'
+import { DateRange } from 'react-day-picker'
 
 type DashboardTableProps<TData> = {
   data?: TData[]
@@ -52,7 +54,13 @@ export function DashboardTable<TData>({
 
   // Define selectedDate state here
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined)
-
+  
+  // 
+  const [date, setDate] = useState<DateRange | undefined>({
+    from: new Date(),
+    to: new Date(),
+  });
+  
   // filter date data
   const tableData = useMemo(() => {
     if (selectedDate) {
@@ -109,22 +117,12 @@ export function DashboardTable<TData>({
     return data?.reduce((sum, item) => sum + ((item).amount || 0), 0)
   }, [data, isPending])
 
-  console.log("totalAmount",totalAmount)
+ 
+
+
   return (
     <>
       <div className='mt-4 flex items-center justify-between !gap-4'>
-        {/* filter email */}
-        {/* <div className="flex items-center py-4">
-        <Input
-          placeholder="Filter emails..."
-          value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
-          onChange={(event) =>
-            table.getColumn("email")?.setFilterValue(event.target.value)
-          }
-          className="max-w-sm"
-        />
-      </div> */}
-
         {/* filter search */}
         <div className='relative flex items-center'>
           <span className='absolute inset-y-0 left-0 flex items-center pl-3'>
@@ -137,8 +135,7 @@ export function DashboardTable<TData>({
             className='w-48 bg-background pl-9 lg:w-72'
           />
         </div>
-        {/* Pass the setSelectedDate function to DatePickerWithPresets */}
-        <DatePickerWithPresets onSelectDate={setSelectedDate} />
+        <DateRangePicker setDate={setDate} date={date}/>
         <TableViewOptions table={table} />
       </div>
       <div className='mt-4 rounded-xl bg-background p-4 shadow-sm lg:p-8'>

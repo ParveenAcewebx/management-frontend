@@ -30,13 +30,7 @@ import {
 } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import { format } from "date-fns"
-
-
-
-
 import { CreateExpenseForm, createExpenseFormSchema } from '@/schemas/expense-schema'
-
-
 
 const getCategoryOptions = (list: string[] | undefined) => {
   if (!list || !list.length) return [];
@@ -84,6 +78,7 @@ console.log("expCat",expCat)
 
   function handleSubmit(values: CreateExpenseForm) {
     console.log("values", values);
+    
     // const { terms: _, ...createTeamInput } = values
 
     // createTeam.mutate(createTeamInput, {
@@ -132,22 +127,20 @@ console.log("expCat",expCat)
                   </FormItem>
                 )}
               />
-
-              
-
+  
               <FormField
                 control={form.control}
                 name="expenseDate"
                 render={({ field }) => (
-                  <FormItem className="flex flex-col">
+                  <FormItem className="">
                     <FormLabel>Expense Date</FormLabel>
                     <Popover>
                       <PopoverTrigger asChild>
                         <FormControl>
-                          <Button
+                          <Button  
                             variant={"outline"}
                             className={cn(
-                              "w-[240px] pl-3 text-left font-normal",
+                              "w-full pl-3 text-left font-normal",
                               !field.value && "text-muted-foreground"
                             )}
                           >
@@ -190,7 +183,7 @@ console.log("expCat",expCat)
                     >
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder="Select a league" />
+                          <SelectValue placeholder="Select a category" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
@@ -221,7 +214,7 @@ console.log("expCat",expCat)
                         <SelectTrigger>
                           <SelectValue
                             placeholder={
-                              isPending ? "Loading..." : "Select a team"
+                              isPending ? "Loading..." : "Select a Sub Category"
                             }
                           />
                         </SelectTrigger>

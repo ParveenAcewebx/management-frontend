@@ -35,6 +35,7 @@ import {
   AddExpenseFormSchema
 } from '@/schemas/add-expense-schema'
 import { format } from 'date-fns'
+import { useToast } from '@/hooks/use-toast'
 
 const getCategoryOptions = (list: string[] | undefined) => {
   if (!list || !list.length) return []
@@ -79,6 +80,7 @@ export default function AddExpense() {
     }
   })
 
+  const { toast } = useToast()
   const selectedcategory = form.watch('category')
   const { data: expCat, isPending, isError, error } = useGetExpCat()
 
@@ -110,7 +112,9 @@ export default function AddExpense() {
       const response = await api.post('/expense/add', payload)
       console.log('response:', response)
       form.reset()
-      alert('Expense added successfully!')
+      toast({
+        description: "Expense added successfully!",
+      })
     } catch (error) {
       console.error('error', error)
     }
@@ -122,7 +126,7 @@ export default function AddExpense() {
         <section className='container space-y-10 py-6'>
           <h1 className='text-4xl font-bold text-primary'>Add Expense</h1>
           <Form {...form}>
-            <div className='m-auto grid justify-center items-center w-full grid-cols-3 gap-4'>
+            <div className='m-auto grid w-full grid-cols-3 items-center justify-center gap-4'>
               <FormField
                 control={form.control}
                 name='expenseTitle'
@@ -132,7 +136,9 @@ export default function AddExpense() {
                     <FormControl>
                       <Input placeholder='' {...field} />
                     </FormControl>
-                    <FormDescription>Please enter the Expense.</FormDescription>
+                    <FormDescription>
+                      Please enter the expense name.
+                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -148,7 +154,7 @@ export default function AddExpense() {
                       <Input placeholder='' {...field} />
                     </FormControl>
                     <FormDescription>
-                      Please enter the expense description.
+                      Please enter the description.
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -158,7 +164,7 @@ export default function AddExpense() {
                 control={form.control}
                 name='paymentDate'
                 render={({ field }) => (
-                  <FormItem className='flex flex-col'>
+                  <FormItem className=''>
                     <FormLabel>Expense Date</FormLabel>
                     <Popover>
                       <PopoverTrigger asChild>
@@ -166,7 +172,7 @@ export default function AddExpense() {
                           <Button
                             variant={'outline'}
                             className={cn(
-                              'w-[240px] pl-3 text-left font-normal',
+                              'w-full pl-3 text-left font-normal',
                               !field.value && 'text-muted-foreground'
                             )}
                           >
@@ -183,7 +189,12 @@ export default function AddExpense() {
                         <Calendar
                           mode='single'
                           selected={field.value}
-                          onSelect={field.onChange}
+                          onSelect={date => {
+                            const adjustedDate = date
+                              ? new Date(date.setHours(12, 0, 0, 0))
+                              : null
+                            field.onChange(adjustedDate)
+                          }}
                           disabled={date =>
                             date > new Date() || date < new Date('1900-01-01')
                           }
@@ -191,7 +202,7 @@ export default function AddExpense() {
                         />
                       </PopoverContent>
                     </Popover>
-                    <FormDescription>Please enter the Expense.</FormDescription>
+                    <FormDescription>Please select the date.</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -209,7 +220,7 @@ export default function AddExpense() {
                     >
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder='Select a league' />
+                          <SelectValue placeholder='Select a category' />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
@@ -241,7 +252,7 @@ export default function AddExpense() {
                         <SelectTrigger>
                           <SelectValue
                             placeholder={
-                              isPending ? 'Loading...' : 'Select a team'
+                              isPending ? 'Loading...' : 'Select a subcategory'
                             }
                           />
                         </SelectTrigger>
@@ -257,7 +268,9 @@ export default function AddExpense() {
                         ))}
                       </SelectContent>
                     </Select>
-                    <FormDescription>Please select subcategory.</FormDescription>
+                    <FormDescription>
+                      Please select subcategory.
+                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
