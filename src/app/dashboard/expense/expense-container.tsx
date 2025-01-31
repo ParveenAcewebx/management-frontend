@@ -1,10 +1,10 @@
 'use client'
 import { DashboardTable } from '@/components/dashboard/table/dashboard-table'
 
+import { useGetExpenseTable } from '@/hooks/expense-table/use-get-expense-table'
 import { PaginationState } from '@tanstack/react-table'
 import { useState } from 'react'
 import { Columns } from './expense-columns'
-import { useGetExpenseTable } from '@/hooks/expense-table/use-get-expense-table'
 
 export default function ExpenseContainer() {
   const [pagination, setPagination] = useState<PaginationState>({
@@ -17,18 +17,16 @@ export default function ExpenseContainer() {
     isError,
     error
   } = useGetExpenseTable(pagination.pageSize, pagination.pageIndex + 1)
-
-console.log("expenseData",expenseData)
+  console.log('expenseData', expenseData)
 
   if (isError) throw new Error(error.message)
-    return (
-      <DashboardTable
+  return (
+    <DashboardTable
       data={expenseData?.data.data || []}
       columns={Columns}
       isPending={isPending}
       pagination={pagination}
       setPagination={setPagination}
     />
-    );
-    
+  )
 }

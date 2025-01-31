@@ -80,43 +80,8 @@ const data = {
       title: "Transaction",
       url: "#",
       icon: BookOpen,
-      // items: [
-      //   {
-      //     title: "Introduction",
-      //     url: "#",
-      //   },
-      //   {
-      //     title: "Get Started",
-      //     url: "#",
-      //   },
-      //   {
-      //     title: "Tutorials",
-      //     url: "#",
-      //   },
-      //   {
-      //     title: "Changelog",
-      //     url: "#",
-      //   },
-      // ],
     },
   ],
-  // projects: [
-  //   {
-  //     name: "Design Engineering",
-  //     url: "#",
-  //     icon: Frame,
-  //   },
-  //   {
-  //     name: "Sales & Marketing",
-  //     url: "#",
-  //     icon: PieChart,
-  //   },
-  //   {
-  //     name: "Travel",
-  //     url: "#",
-  //     icon: Map,
-  //   },
-  // ],
 }
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
@@ -124,12 +89,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   console.log("session",session)
   return (
     <Sidebar collapsible="icon" {...props}>
-      {/* <SidebarHeader>
-        <TeamSwitcher teams={data.teams} />
-      </SidebarHeader> */}
       <SidebarContent>
         <NavMain items={data.navMain} />
-        {/* <NavProjects projects={data.projects} /> */}
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={data?.session} />

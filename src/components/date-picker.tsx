@@ -20,7 +20,7 @@ import { CalendarIcon } from 'lucide-react'
 import * as React from 'react'
 
 interface DatePickerWithPresetsProps {
-  onSelectDate: (date: Date | undefined) => void // Function type for onSelectDate
+  onSelectDate: (date: Date | undefined) => void 
 }
 
 export function DatePickerWithPresets({

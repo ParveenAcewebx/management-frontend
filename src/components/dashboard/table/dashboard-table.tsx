@@ -1,4 +1,4 @@
-import { DatePickerWithPresets } from '@/components/date-picker'
+
 import { Input } from '@/components/ui/input'
 import { Skeleton } from '@/components/ui/skeleton'
 import {
@@ -65,7 +65,7 @@ export function DashboardTable<TData>({
   const tableData = useMemo(() => {
     if (selectedDate) {
       return data?.filter(item => {
-        const itemDate = new Date((item).date) // Parse string to Date
+        const itemDate = new Date((item).date)
         return (
           itemDate.getFullYear() === selectedDate.getFullYear() &&
           itemDate.getMonth() === selectedDate.getMonth() &&

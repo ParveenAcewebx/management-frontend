@@ -17,5 +17,5 @@ export async function middleware(req: NextRequest) {
 
 // Specify the paths for which the middleware will run
 export const config = {
-  matcher: ['/dashboard/:path*'] // Apply to all routes under /dashboard
+  matcher: ['/dashboard/:path*'] 
 }

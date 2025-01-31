@@ -43,7 +43,7 @@ export const Columns: ColumnDef<ExpenseItem>[] = [
   {
     accessorKey: 'subCategory',
     header: ({ column }) => (
-      <TableColumnHeader column={column} title='subCategory' />
+      <TableColumnHeader column={column} title='SubCategory' />
     )
   },
 
