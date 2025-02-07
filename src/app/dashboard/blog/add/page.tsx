@@ -1,12 +1,13 @@
-"use client";
-import { useForm } from "react-hook-form";
-import { Input } from "@/components/ui/input";
-import { useGetExpCat } from "@/hooks/blog/use-get-catsubcat";
-import { cn } from "@/lib/utils";
-import { CalendarIcon } from "lucide-react";
-import { Calendar } from "@/components/ui/calendar";
-import { zodResolver } from "@hookform/resolvers/zod"
+'use client'
+import { Calendar } from '@/components/ui/calendar'
+import { Input } from '@/components/ui/input'
+import { useGetExpCat } from '@/hooks/blog/use-get-catsubcat'
+import { cn } from '@/lib/utils'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { CalendarIcon } from 'lucide-react'
+import { useForm } from 'react-hook-form'
 
+import { Button } from '@/components/ui/button'
 import {
   Form,
   FormControl,
@@ -14,71 +15,77 @@ import {
   FormField,
   FormItem,
   FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+  FormMessage
+} from '@/components/ui/form'
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger
+} from '@/components/ui/popover'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+  SelectValue
+} from '@/components/ui/select'
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { Button } from "@/components/ui/button";
-import { format } from "date-fns"
-import { CreateExpenseForm, createExpenseFormSchema } from '@/schemas/expense-schema'
+  CreateExpenseForm,
+  createExpenseFormSchema
+} from '@/schemas/expense-schema'
+import { format } from 'date-fns'
 
 const getCategoryOptions = (list: string[] | undefined) => {
-  if (!list || !list.length) return [];
+  if (!list || !list.length) return []
 
-  return list.map((item) => ({
+  return list.map(item => ({
     id: item.categoryName,
     label: item.categoryName,
-    value: item.categoryName,
-  }));
-};
+    value: item.categoryName
+  }))
+}
 
-const getSubCategoryOptions = (expenseCategoryData:string[], selectedcategory:string) => {
-  if (!selectedcategory || !selectedcategory.length) return [];
+const getSubCategoryOptions = (
+  expenseCategoryData: string[],
+  selectedcategory: string
+) => {
+  if (!selectedcategory || !selectedcategory.length) return []
   const cat = expenseCategoryData.filter(
-    (cat) => cat.categoryName === selectedcategory
-  );
+    cat => cat.categoryName === selectedcategory
+  )
 
-  const subCat = cat[0].subCategory;
-  return subCat.map((item) => ({
+  const subCat = cat[0].subCategory
+  return subCat.map(item => ({
     id: item,
     label: item,
-    value: item,
-  }));
-};
+    value: item
+  }))
+}
 
 export default function Page() {
   const form = useForm<CreateExpenseForm>({
     resolver: zodResolver(createExpenseFormSchema),
     defaultValues: {
-      expenseName: "",
-      description: "",
+      expenseName: '',
+      description: '',
       expenseDate: new Date(),
-      category: "",
-    },
-  });
+      category: ''
+    }
+  })
 
-  const selectedcategory = form.watch("category");
-  const { data: expCat, isPending, isError, error } = useGetExpCat();
-console.log("expCat",expCat)
-  const expenseCategoryData = expCat?.data.data; 
+  const selectedcategory = form.watch('category')
+  const { data: expCat, isPending, isError, error } = useGetExpCat()
+  const expenseCategoryData = expCat?.data.data
 
-  const categories = getCategoryOptions(expenseCategoryData);
-  const subCategories = getSubCategoryOptions( expenseCategoryData, selectedcategory );
-  if (isError) throw new Error(error.message);
+  const categories = getCategoryOptions(expenseCategoryData)
+  const subCategories = getSubCategoryOptions(
+    expenseCategoryData,
+    selectedcategory
+  )
+  if (isError) throw new Error(error.message)
 
   function handleSubmit(values: CreateExpenseForm) {
-    console.log("values", values);
-    
+    console.log('values', values)
     // const { terms: _, ...createTeamInput } = values
 
     // createTeam.mutate(createTeamInput, {
@@ -92,18 +99,18 @@ console.log("expCat",expCat)
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(handleSubmit)}>
-        <section className="py-6 container space-y-10">
-          <h1 className="text-4xl font-bold text-primary">Blog</h1>
+        <section className='container space-y-10 py-6'>
+          <h1 className='text-4xl font-bold text-primary'>Blog</h1>
           <Form {...form}>
-            <div className=" m-auto grid grid-cols-3 gap-4 w-full">
+            <div className='m-auto grid w-full grid-cols-3 gap-4'>
               <FormField
                 control={form.control}
-                name="expenseName"
+                name='expenseName'
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Expense Name</FormLabel>
                     <FormControl>
-                      <Input placeholder="" {...field} />
+                      <Input placeholder='' {...field} />
                     </FormControl>
                     <FormDescription>Please enter the Expense.</FormDescription>
                     <FormMessage />
@@ -113,12 +120,12 @@ console.log("expCat",expCat)
 
               <FormField
                 control={form.control}
-                name="description"
+                name='description'
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Description</FormLabel>
                     <FormControl>
-                      <Input placeholder="" {...field} />
+                      <Input placeholder='' {...field} />
                     </FormControl>
                     <FormDescription>
                       Please enter the expense description.
@@ -127,45 +134,45 @@ console.log("expCat",expCat)
                   </FormItem>
                 )}
               />
-  
+
               <FormField
                 control={form.control}
-                name="expenseDate"
+                name='expenseDate'
                 render={({ field }) => (
-                  <FormItem className="">
+                  <FormItem className=''>
                     <FormLabel>Expense Date</FormLabel>
                     <Popover>
                       <PopoverTrigger asChild>
                         <FormControl>
-                          <Button  
-                            variant={"outline"}
+                          <Button
+                            variant={'outline'}
                             className={cn(
-                              "w-full pl-3 text-left font-normal",
-                              !field.value && "text-muted-foreground"
+                              'w-full pl-3 text-left font-normal',
+                              !field.value && 'text-muted-foreground'
                             )}
                           >
                             {field.value ? (
-                              format(field.value, "PPP")
+                              format(field.value, 'PPP')
                             ) : (
                               <span>Pick the expance date</span>
                             )}
-                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                            <CalendarIcon className='ml-auto h-4 w-4 opacity-50' />
                           </Button>
                         </FormControl>
                       </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0" align="start">
+                      <PopoverContent className='w-auto p-0' align='start'>
                         <Calendar
-                          mode="single"
+                          mode='single'
                           selected={field.value}
                           onSelect={field.onChange}
-                          disabled={(date) =>
-                            date > new Date() || date < new Date("1900-01-01")
+                          disabled={date =>
+                            date > new Date() || date < new Date('1900-01-01')
                           }
                           initialFocus
                         />
                       </PopoverContent>
                     </Popover>
-                   
+
                     <FormMessage />
                   </FormItem>
                 )}
@@ -173,7 +180,7 @@ console.log("expCat",expCat)
 
               <FormField
                 control={form.control}
-                name="category"
+                name='category'
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Category</FormLabel>
@@ -183,11 +190,11 @@ console.log("expCat",expCat)
                     >
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder="Select a category" />
+                          <SelectValue placeholder='Select a category' />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {categories.map((category) => (
+                        {categories.map(category => (
                           <SelectItem key={category.id} value={category.value}>
                             {category.label}
                           </SelectItem>
@@ -201,7 +208,7 @@ console.log("expCat",expCat)
 
               <FormField
                 control={form.control}
-                name="subCat"
+                name='subCat'
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Sub Category</FormLabel>
@@ -214,13 +221,13 @@ console.log("expCat",expCat)
                         <SelectTrigger>
                           <SelectValue
                             placeholder={
-                              isPending ? "Loading..." : "Select a Sub Category"
+                              isPending ? 'Loading...' : 'Select a Sub Category'
                             }
                           />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {subCategories?.map((teamOption) => (
+                        {subCategories?.map(teamOption => (
                           <SelectItem
                             key={teamOption.id}
                             value={teamOption.value}
@@ -236,11 +243,11 @@ console.log("expCat",expCat)
               />
             </div>
           </Form>
-          <div className="flex justify-end">
-            <Button type="submit">Submit</Button>
+          <div className='flex justify-end'>
+            <Button type='submit'>Submit</Button>
           </div>
         </section>
       </form>
     </Form>
-  );
+  )
 }

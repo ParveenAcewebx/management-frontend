@@ -34,8 +34,6 @@ export default function Layout({
     }
   }, [open])
 
-  
-  // Helper function to generate breadcrumb items based on the pathname
   const breadcrumbItems = useMemo(() => {
     const paths = pathname.split('/').filter(Boolean)
     return paths.map((path, index) => {
@@ -43,19 +41,17 @@ export default function Layout({
       return { title: path, url }
     })
   }, [pathname])
-  // Helper function to capitalize the first letter of a string
+
   const capitalizeFirstLetter = (str: string) => {
     return str.charAt(0).toUpperCase() + str.slice(1)
   }
+
+  
   const handleSidebarToggle = (toggle: boolean) => {
-    console.log('Sidebar toggle changed', toggle)
     setOpen(toggle)
   }
   return (
-    <SidebarProvider
-      open={open}
-      onOpenChange={handleSidebarToggle}
-    >
+    <SidebarProvider open={open} onOpenChange={handleSidebarToggle}>
       <AppSidebar />
       <SidebarInset>
         <header className='!mr-5 flex h-16 shrink-0 items-center justify-between gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12'>

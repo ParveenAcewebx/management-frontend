@@ -108,7 +108,6 @@ export default function AddExpense() {
         paidBy: values.paidBy
       }
 
-      console.log('payload', payload)
       const response = await api.post('/expense/add', payload)
       console.log('response:', response)
       form.reset()

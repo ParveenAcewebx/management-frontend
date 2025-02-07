@@ -1,94 +1,138 @@
-"use client";
+'use client'
 
-import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { format, startOfToday, startOfYesterday, startOfWeek, endOfWeek, startOfMonth, endOfMonth } from "date-fns";
-import * as React from "react";
-import { cn } from "@/lib/utils";
+import { Button } from '@/components/ui/button'
+import { Calendar } from '@/components/ui/calendar'
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger
+} from '@/components/ui/popover'
+import { cn } from '@/lib/utils'
+import {
+  endOfMonth,
+  endOfWeek,
+  format,
+  startOfMonth,
+  startOfToday,
+  startOfWeek,
+  startOfYesterday
+} from 'date-fns'
+import * as React from 'react'
 
 const shortcuts = [
-  { label: "Today", getRange: () => ({ from: startOfToday(), to: startOfToday() }) },
-  { label: "Yesterday", getRange: () => ({ from: startOfYesterday(), to: startOfYesterday() }) },
-  { label: "This Week", getRange: () => ({ from: startOfWeek(new Date()), to: endOfWeek(new Date()) }) },
   {
-    label: "Last Week",
-    getRange: () => {
-      const start = startOfWeek(new Date(), { weekStartsOn: 1 }) - 7 * 24 * 60 * 60 * 1000;
-      const end = endOfWeek(new Date(), { weekStartsOn: 1 }) - 7 * 24 * 60 * 60 * 1000;
-      return { from: new Date(start), to: new Date(end) };
-    },
+    label: 'Today',
+    getRange: () => ({ from: startOfToday(), to: startOfToday() })
   },
-  { label: "This Month", getRange: () => ({ from: startOfMonth(new Date()), to: endOfMonth(new Date()) }) },
   {
-    label: "Last Month",
-    getRange: () => {
-      const firstDayLastMonth = startOfMonth(new Date(new Date().setMonth(new Date().getMonth() - 1)));
-      const lastDayLastMonth = endOfMonth(firstDayLastMonth);
-      return { from: firstDayLastMonth, to: lastDayLastMonth };
-    },
+    label: 'Yesterday',
+    getRange: () => ({ from: startOfYesterday(), to: startOfYesterday() })
   },
-];
+  {
+    label: 'This Week',
+    getRange: () => ({
+      from: startOfWeek(new Date()),
+      to: endOfWeek(new Date())
+    })
+  },
+  {
+    label: 'Last Week',
+    getRange: () => {
+      const start =
+        startOfWeek(new Date(), { weekStartsOn: 1 }) - 7 * 24 * 60 * 60 * 1000
+      const end =
+        endOfWeek(new Date(), { weekStartsOn: 1 }) - 7 * 24 * 60 * 60 * 1000
+      return { from: new Date(start), to: new Date(end) }
+    }
+  },
+  {
+    label: 'This Month',
+    getRange: () => ({
+      from: startOfMonth(new Date()),
+      to: endOfMonth(new Date())
+    })
+  },
+  {
+    label: 'Last Month',
+    getRange: () => {
+      const firstDayLastMonth = startOfMonth(
+        new Date(new Date().setMonth(new Date().getMonth() - 1))
+      )
+      const lastDayLastMonth = endOfMonth(firstDayLastMonth)
+      return { from: firstDayLastMonth, to: lastDayLastMonth }
+    }
+  }
+]
 
 export default function DateRangePicker({
   date,
-  setDate,
-  className,
+  setDate
 }: {
-  date: { from: Date | undefined; to: Date | undefined };
-  setDate: (range: { from: Date | undefined; to: Date | undefined }) => void;
-  className?: string;
+  date: { from: Date | undefined; to: Date | undefined }
+  setDate: (range: { from: Date | undefined; to: Date | undefined }) => void
+  className?: string
 }) {
-  const [localDate, setLocalDate] = React.useState(date);
-  const [selectedShortcut, setSelectedShortcut] = React.useState<string | null>(null);
+  const [localDate, setLocalDate] = React.useState(date)
+  const [selectedShortcut, setSelectedShortcut] = React.useState<string | null>(
+    null
+  )
+  const [popoverOpen, setPopoverOpen] = React.useState(false)
 
   const handleApply = () => {
-    setDate(localDate);
-  };
+    setDate(localDate)
+    setPopoverOpen(false)
+  }
 
-  const handleShortcutClick = (shortcut: string, range: { from: Date | undefined; to: Date | undefined }) => {
-    console.log("shortcut",shortcut)
-    setSelectedShortcut(shortcut);
-    setLocalDate(range);
-  };
+  const handleShortcutClick = (
+    shortcut: string,
+    range: { from: Date | undefined; to: Date | undefined }
+  ) => {
+    setSelectedShortcut(shortcut)
+    setLocalDate(range)
+  }
+
+  console.log('date', date)
 
   return (
-    <Popover>
+    <Popover open={popoverOpen} onOpenChange={setPopoverOpen}>
       <PopoverTrigger asChild>
         <Button
-          variant="outline"
+          variant='outline'
           className={cn(
-            "w-[300px] justify-start text-left font-normal",
-            !localDate && "text-muted-foreground"
+            'w-[300px] justify-start text-left font-normal',
+            !localDate && 'text-muted-foreground'
           )}
+          onClick={() => setPopoverOpen(true)}
         >
           {localDate?.from ? (
             localDate.to ? (
               <>
-                {format(localDate.from, "LLL dd, y")} - {format(localDate.to, "LLL dd, y")}
+                {format(localDate.from, 'LLL dd, y')} -{' '}
+                {format(localDate.to, 'LLL dd, y')}
               </>
             ) : (
-              format(localDate.from, "LLL dd, y")
+              format(localDate.from, 'LLL dd, y')
             )
           ) : (
-            "Pick a date"
+            'Pick a date'
           )}
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="date-range-picker p-4">
-        <div className="flex gap-4">
+      <PopoverContent className='date-range-picker p-4'>
+        <div className='flex gap-4'>
           {/* Shortcuts Sidebar */}
-          <div className="w-1/4 space-y-2 border-r pr-4">
-            {shortcuts.map((shortcut) => (
+          <div className='w-1/4 space-y-2 border-r pr-4'>
+            {shortcuts.map(shortcut => (
               <Button
                 key={shortcut.label}
-                variant={selectedShortcut === shortcut.label ? "default" : "ghost"}
-                size="sm"
-                onClick={() => handleShortcutClick(shortcut.label, shortcut.getRange())}
-                className={cn(
-                  "justify-start w-full",
-                  // selectedShortcut === shortcut.label && "bg-accent text-accent-foreground"
-                )}
+                variant={
+                  selectedShortcut === shortcut.label ? 'default' : 'ghost'
+                }
+                size='sm'
+                onClick={() =>
+                  handleShortcutClick(shortcut.label, shortcut.getRange())
+                }
+                className='w-full justify-start'
               >
                 {shortcut.label}
               </Button>
@@ -96,19 +140,19 @@ export default function DateRangePicker({
           </div>
 
           {/* Calendar & Footer Actions */}
-          <div className="w-2/3">
+          <div className='w-2/3'>
             <Calendar
-              mode="range"
+              mode='range'
               defaultMonth={localDate?.from}
               selected={localDate}
-              onSelect={(range) => {
-                setLocalDate(range);
-                setSelectedShortcut(null); 
+              onSelect={range => {
+                setLocalDate(range)
+                setSelectedShortcut(null)
               }}
               numberOfMonths={2}
             />
-            <div className="flex justify-end gap-2 pt-4">
-              <Button variant="ghost" onClick={() => setLocalDate(date)}>
+            <div className='flex justify-end gap-2 pt-4'>
+              <Button variant='ghost' onClick={() => setPopoverOpen(false)}>
                 Close
               </Button>
               <Button onClick={handleApply}>OK</Button>
@@ -117,5 +161,5 @@ export default function DateRangePicker({
         </div>
       </PopoverContent>
     </Popover>
-  );
+  )
 }

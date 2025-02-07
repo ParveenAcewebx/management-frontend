@@ -17,7 +17,7 @@ export default function ExpenseContainer() {
     isError,
     error
   } = useGetExpenseTable(pagination.pageSize, pagination.pageIndex + 1)
-  console.log('expenseData', expenseData)
+
 
   if (isError) throw new Error(error.message)
   return (

@@ -42,7 +42,6 @@ export function NavUser({
   const { isMobile } = useSidebar()
   const { data: session } = useSession()
   const { fullName } = getUserName(session?.user)
-   console.log("session111",session);
    
 
    // show avatar name

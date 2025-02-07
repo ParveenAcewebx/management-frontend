@@ -2,7 +2,7 @@ import React from 'react'
 
 const ReceiptForm = () => {
   return (
-    <div>ReceiptForm</div>
+    <div>Receipt</div>
   )
 }
 

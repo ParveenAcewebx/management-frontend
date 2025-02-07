@@ -79,7 +79,7 @@ export const Columns: ColumnDef<ExpenseItem>[] = [
     cell: () => {
       return (
         <Link
-          href='/dashboard/expense/reciept-form'
+          href='/dashboard/expense/reciept'
           rel='noopener noreferrer'
           className='text-blue-500'
         >

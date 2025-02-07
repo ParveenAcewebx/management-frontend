@@ -36,7 +36,7 @@ export default function ProfileForm() {
   const router = useRouter()
 
   const [isSigningIn, setIsSigningIn] = useState(false)
-  console.log(isSigningIn)
+console.log("isSigningIn",isSigningIn)
   const form = useForm<formpe>({
     resolver: zodResolver(formSchema),
     defaultValues: {
