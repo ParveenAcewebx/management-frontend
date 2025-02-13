@@ -1,4 +1,4 @@
-
+import DateRangePicker from '@/components/date-range-picker'
 import { Input } from '@/components/ui/input'
 import { Skeleton } from '@/components/ui/skeleton'
 import {
@@ -21,12 +21,11 @@ import {
   useReactTable,
   VisibilityState
 } from '@tanstack/react-table'
-import { SearchIcon } from 'lucide-react'
+
 import { Dispatch, SetStateAction, useMemo, useState } from 'react'
+import { DateRange } from 'react-day-picker'
 import { TablePagination } from './table-pagination'
 import { TableViewOptions } from './table-view-options'
-import DateRangePicker from '@/components/date-range-picker'
-import { DateRange } from 'react-day-picker'
 
 type DashboardTableProps<TData> = {
   data?: TData[]
@@ -39,6 +38,8 @@ type DashboardTableProps<TData> = {
 }
 
 export function DashboardTable<TData>({
+  globalFilter,
+  setGlobalFilter,
   data = [],
   columns,
   pageCount = 1,
@@ -47,25 +48,20 @@ export function DashboardTable<TData>({
   setPagination
 }: DashboardTableProps<TData>) {
   const [sorting, setSorting] = useState<SortingState>([])
-  const [globalFilter, setGlobalFilter] = useState('')
+
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = useState({})
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
 
   // Define selectedDate state here
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined)
-  
-  // 
-  const [date, setDate] = useState<DateRange | undefined>({
-    from: new Date(),
-    to: new Date(),
-  });
+
   
   // filter date data
   const tableData = useMemo(() => {
     if (selectedDate) {
       return data?.filter(item => {
-        const itemDate = new Date((item).date)
+        const itemDate = new Date(item.date)
         return (
           itemDate.getFullYear() === selectedDate.getFullYear() &&
           itemDate.getMonth() === selectedDate.getMonth() &&
@@ -112,30 +108,15 @@ export function DashboardTable<TData>({
   })
 
   // Calculate total amount
-  const totalAmount = useMemo(() => {
-    if (isPending) return 0
-    return data?.reduce((sum, item) => sum + ((item).amount || 0), 0)
-  }, [data, isPending])
-
- 
-
+  // const totalAmount = useMemo(() => {
+  //   if (isPending) return 0
+  //   return data?.reduce((sum, item) => sum + (item.amount || 0), 0)
+  // }, [data, isPending])
 
   return (
     <>
-      <div className='mt-4 flex items-center justify-between !gap-4'>
-        {/* filter search */}
-        <div className='relative flex items-center'>
-          <span className='absolute inset-y-0 left-0 flex items-center pl-3'>
-            <SearchIcon className='h-4 w-4 text-muted-foreground' />
-          </span>
-          <Input
-            placeholder='Search'
-            value={globalFilter}
-            onChange={event => setGlobalFilter(event.target.value)}
-            className='w-48 bg-background pl-9 lg:w-72'
-          />
-        </div>
-        <DateRangePicker setDate={setDate} date={date}/>
+      <div className=' flex items-center justify-between !gap-4'>
+        
         <TableViewOptions table={table} />
       </div>
       <div className='mt-4 rounded-xl bg-background p-4 shadow-sm lg:p-8'>
@@ -196,7 +177,7 @@ export function DashboardTable<TData>({
           </TableBody>
         </Table>
       </div>
-      <TablePagination table={table} />
+      <TablePagination pagination={pagination} table={table} />
     </>
   )
 }

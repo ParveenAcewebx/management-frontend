@@ -1,35 +1,28 @@
-'use client'
-
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger
-} from '@/components/ui/popover'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue
-} from '@/components/ui/select'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { cn } from '@/lib/utils'
 import { addDays, format } from 'date-fns'
 import { CalendarIcon } from 'lucide-react'
 import * as React from 'react'
 
 interface DatePickerWithPresetsProps {
-  onSelectDate: (date: Date | undefined) => void 
+  onSelectDate: (date: Date | undefined) => void
 }
 
-export function DatePickerWithPresets({
-  onSelectDate,
-}: DatePickerWithPresetsProps) {
+export function DatePickerWithPresets({ onSelectDate }: DatePickerWithPresetsProps) {
   const [date, setDate] = React.useState<Date>()
+  const [popoverOpen, setPopoverOpen] = React.useState(false)
+
+  const handleDateSelect = (newDate: Date | undefined) => {
+    setDate(newDate)
+    onSelectDate(newDate)
+    setPopoverOpen(false) // Close the calendar on date selection
+  }
 
   return (
-    <Popover>
+    <Popover open={popoverOpen} onOpenChange={setPopoverOpen}>
       <PopoverTrigger asChild>
         <Button
           variant={'outline'}
@@ -42,15 +35,11 @@ export function DatePickerWithPresets({
           {date ? format(date, 'PPP') : <span>Search Date</span>}
         </Button>
       </PopoverTrigger>
-      <PopoverContent
-        align='start'
-        className='flex w-auto flex-col space-y-2 p-2'
-      >
+      <PopoverContent align='start' className='flex w-auto flex-col space-y-2 p-2'>
         <Select
           onValueChange={value => {
             const newDate = addDays(new Date(), parseInt(value))
-            setDate(newDate)
-            onSelectDate(newDate) 
+            handleDateSelect(newDate)
           }}
         >
           <SelectTrigger>
@@ -67,15 +56,11 @@ export function DatePickerWithPresets({
           <Calendar
             mode='single'
             selected={date}
-            onSelect={newDate => {
-              setDate(newDate)
-              onSelectDate(newDate) 
-            }}
+            onSelect={handleDateSelect}
+            
           />
         </div>
       </PopoverContent>
     </Popover>
   )
 }
-
-;

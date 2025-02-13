@@ -1,6 +1,6 @@
-"use client"
+"use client";
 
-import * as React from "react"
+import * as React from "react";
 import {
   AudioWaveform,
   BookOpen,
@@ -8,18 +8,19 @@ import {
   Command,
   GalleryVerticalEnd,
   SquareTerminal,
-} from "lucide-react"
+  LayoutDashboard,
+} from "lucide-react";
 
-import { NavMain } from "@/components/nav-main"
-import { NavUser } from "@/components/nav-user"
+import { NavMain } from "@/components/nav-main";
+import { NavUser } from "@/components/nav-user";
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
   SidebarRail,
-} from "@/components/ui/sidebar"
+} from "@/components/ui/sidebar";
 
-// This is sample data.
+// Sample data updated with Dashboard entry.
 const data = {
   user: {
     name: "Lew & Dowski Capital",
@@ -45,6 +46,11 @@ const data = {
   ],
   navMain: [
     {
+      title: "Dashboard",
+      url: "/dashboard",
+      icon: LayoutDashboard,
+    },
+    {
       title: "Expense",
       url: "#",
       icon: SquareTerminal,
@@ -57,7 +63,7 @@ const data = {
         {
           title: "Expense List ",
           url: "/dashboard/expense",
-        }
+        },
       ],
     },
     {
@@ -81,10 +87,9 @@ const data = {
       icon: BookOpen,
     },
   ],
-}
+};
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarContent>
@@ -95,5 +100,5 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>
-  )
+  );
 }

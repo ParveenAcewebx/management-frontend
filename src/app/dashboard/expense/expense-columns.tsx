@@ -2,6 +2,7 @@ import { TableColumnHeader } from '@/components/dashboard/table/table-column-hea
 import { Checkbox } from '@/components/ui/checkbox'
 import { ExpenseItem } from '@/types/transaction-type'
 import { ColumnDef } from '@tanstack/react-table'
+import { format } from 'date-fns'
 import Link from 'next/link'
 
 // Define the column definitions with proper typing
@@ -31,8 +32,11 @@ export const Columns: ColumnDef<ExpenseItem>[] = [
 
   {
     accessorKey: 'paymentDate',
-    header: ({ column }) => <TableColumnHeader column={column} title='Date' />,
-    filterFn: 'equals'
+    header: 'Payment Date',
+    cell: ({ getValue }) => {
+      const dateValue = getValue<string>()
+      return dateValue ? format(new Date(dateValue), 'yyyy-MM-dd') : ''
+    },    
   },
   {
     accessorKey: 'category',

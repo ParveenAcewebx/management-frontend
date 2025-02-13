@@ -18,7 +18,8 @@ type TablePaginationProps<TData> = {
   table: Table<TData>
 }
 
-export function TablePagination<TData>({ table }: TablePaginationProps<TData>) {
+export function TablePagination<TData>({ table,pagination }: TablePaginationProps<TData>) {
+  console.log("111pagination0--------",pagination)
   return (
     <div className='mx-auto mt-4 flex flex-col items-center justify-between gap-2 lg:flex-row'>
       <div className='flex-1 text-sm text-muted-foreground'>
@@ -61,23 +62,23 @@ export function TablePagination<TData>({ table }: TablePaginationProps<TData>) {
             <DoubleArrowLeftIcon className='h-4 w-4' />
           </Button>
           <Button
-            variant='outline'
-            className='h-8 w-8 p-0'
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-          >
-            <span className='sr-only'>Go to previous page</span>
-            <ChevronLeftIcon className='h-4 w-4' />
-          </Button>
-          <Button
-            variant='outline'
-            className='h-8 w-8 p-0'
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-          >
-            <span className='sr-only'>Go to next page</span>
-            <ChevronRightIcon className='h-4 w-4' />
-          </Button>
+  variant="outline"
+  className="h-8 w-8 p-0"
+  onClick={() => table.previousPage()}
+  disabled={pagination.pageIndex === 0}  // API is 1-based, table is 0-based
+>
+  <ChevronLeftIcon className="h-4 w-4" />
+</Button>
+
+<Button
+  variant="outline"
+  className="h-8 w-8 p-0"
+  onClick={() => table.nextPage()}
+  // disabled={pagination.pageIndex + 1 >= pageCount} // Disable if on last page
+>
+  <ChevronRightIcon className="h-4 w-4" />
+</Button>
+
           <Button
             variant='outline'
             className='hidden h-8 w-8 p-0 lg:flex'

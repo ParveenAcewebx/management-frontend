@@ -1,11 +1,12 @@
-"use client"
+"use client";
 
-import { ChevronRight, type LucideIcon } from "lucide-react"
+import Link from "next/link";
+import { ChevronRight, type LucideIcon } from "lucide-react";
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from "@/components/ui/collapsible"
+} from "@/components/ui/collapsible";
 import {
   SidebarGroup,
   SidebarGroupLabel,
@@ -15,53 +16,51 @@ import {
   SidebarMenuSub,
   SidebarMenuSubButton,
   SidebarMenuSubItem,
-} from "@/components/ui/sidebar"
-import Link from "next/link"
-import { usePathname } from "next/navigation"
-import { useEffect, useState } from "react"
+} from "@/components/ui/sidebar";
+import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 
 export function NavMain({
   items,
 }: {
   items: {
-    title: string
-    url: string
-    icon?: LucideIcon
-    isActive?: boolean
+    title: string;
+    url: string;
+    icon?: LucideIcon;
+    isActive?: boolean;
     items?: {
-      title: string
-      url: string
-    }[]
-  }[]
+      title: string;
+      url: string;
+    }[];
+  }[];
 }) {
-  const pathname = usePathname() // Get the current path
-  const [activeItem, setActiveItem] = useState<string | null>(null)
-  const [activeSubItem, setActiveSubItem] = useState<string | null>(null)
+  const pathname = usePathname();
+  const [activeItem, setActiveItem] = useState<string | null>(null);
+  const [activeSubItem, setActiveSubItem] = useState<string | null>(null);
 
   useEffect(() => {
     items.forEach((item) => {
-      // Match either parent or sub-item URLs
       if (item.url === pathname) {
-        setActiveItem(item.title)
+        setActiveItem(item.title);
       }
-
       item.items?.forEach((subItem) => {
         if (subItem.url === pathname) {
-          setActiveItem(item.title)
-          setActiveSubItem(subItem.title)
+          setActiveItem(item.title);
+          setActiveSubItem(subItem.title);
         }
-      })
-    })
-  }, [pathname, items])
+      });
+    });
+  }, [pathname, items]);
 
   return (
     <SidebarGroup>
       <SidebarGroupLabel>Platform</SidebarGroupLabel>
       <SidebarMenu>
         {items.map((item) => {
-          // Determine if parent item or any of its sub-items are active
-          const isParentActive = item.title === activeItem
-          const isAnySubItemActive = item.items?.some(subItem => subItem.url === pathname)
+          const isParentActive = item.title === activeItem;
+          const isAnySubItemActive = item.items?.some(
+            (subItem) => subItem.url === pathname
+          );
 
           return (
             <Collapsible
@@ -72,14 +71,18 @@ export function NavMain({
             >
               <SidebarMenuItem>
                 <CollapsibleTrigger asChild>
-                  <SidebarMenuButton
-                    tooltip={item.title}
-                    className={isParentActive ? "!bg-gray-100 text-black" : ""}
-                  >
-                    {item.icon && <item.icon />}
-                    <span className="!w-full">{item.title}</span>
-                    <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
-                  </SidebarMenuButton>
+                  <Link href={item.url} passHref>
+                    <SidebarMenuButton
+                      tooltip={item.title}
+                      className={isParentActive ? "!bg-gray-100 text-black" : ""}
+                    >
+                      {item.icon && <item.icon />}
+                      <span className="!w-full">{item.title}</span>
+                      {item.items?.length ? (
+                        <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+                      ) : null}
+                    </SidebarMenuButton>
+                  </Link>
                 </CollapsibleTrigger>
                 <CollapsibleContent>
                   <SidebarMenuSub>
@@ -88,7 +91,9 @@ export function NavMain({
                         <SidebarMenuSubButton
                           asChild
                           className={
-                            activeSubItem === subItem.title ? "!bg-gray-200 text-black" : ""
+                            activeSubItem === subItem.title
+                              ? "!bg-gray-200 text-black"
+                              : ""
                           }
                         >
                           <Link href={subItem.url} passHref>
@@ -101,9 +106,9 @@ export function NavMain({
                 </CollapsibleContent>
               </SidebarMenuItem>
             </Collapsible>
-          )
+          );
         })}
       </SidebarMenu>
     </SidebarGroup>
-  )
+  );
 }

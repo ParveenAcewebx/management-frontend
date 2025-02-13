@@ -1,8 +1,10 @@
-import React from 'react'
+import { Input } from '@/components/ui/input'
 
 const ReceiptForm = () => {
   return (
-    <div>Receipt</div>
+    <>
+      <Input className='w-96' type='file' name='recipt-file' />
+    </>
   )
 }
 

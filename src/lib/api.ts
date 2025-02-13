@@ -14,13 +14,14 @@ api.interceptors.request.use(
       const session = await getSession()
 
       if (session?.user.accessToken) {
-        config.headers['x-access-token'] = session.user.accessToken
+        config.headers['token'] = session.user.accessToken
       }
 
       return config
     } catch (error) {
       console.error('Error fetching session:', error)
       return Promise.reject(error)
+      
     }
   },
   error => {

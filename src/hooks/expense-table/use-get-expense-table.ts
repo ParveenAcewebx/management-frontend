@@ -1,17 +1,32 @@
 import api from '@/lib/api'
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
 
-export function useGetExpenseTable(pageSize: number, page: number) {
-  return useQuery ({
-    queryKey: ['expense', pageSize, page],
+export function useGetExpenseTable(
+  pageSize: number,
+  page: number,
+  startDate?: string,
+  endDate?: string,
+  category?: string,
+  paidBy?: string,
+  search?: string
+) {
+  return useQuery({
+    queryKey: ['expense', pageSize, page, startDate, endDate, category, paidBy, search],
     queryFn: async () => {
-      return await api.get(
-        `expense/list`
-      )
-      // return await api.get<ApiResponse<PaginatedResponse<Transaction>>>(
-      //   `/transaction?pageSize=${pageSize}&page=${page}`
-      // )
+      const response = await api.get(`expense/list`, {
+        params: {
+          pageSize,
+          page,
+          startDate,
+          endDate,
+          category,
+          paidBy,
+          search,
+        },
+      })
+      return response.data // Ensure API returns totalPages
     },
-    placeholderData: keepPreviousData
+    placeholderData: keepPreviousData,
   })
 }
+

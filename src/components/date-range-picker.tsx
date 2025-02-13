@@ -18,6 +18,7 @@ import {
   startOfYesterday
 } from 'date-fns'
 import * as React from 'react'
+import { CalendarIcon } from "lucide-react";
 
 const shortcuts = [
   {
@@ -91,33 +92,33 @@ export default function DateRangePicker({
     setLocalDate(range)
   }
 
-  console.log('date', date)
 
   return (
     <Popover open={popoverOpen} onOpenChange={setPopoverOpen}>
-      <PopoverTrigger asChild>
-        <Button
-          variant='outline'
-          className={cn(
-            'w-[300px] justify-start text-left font-normal',
-            !localDate && 'text-muted-foreground'
-          )}
-          onClick={() => setPopoverOpen(true)}
-        >
-          {localDate?.from ? (
-            localDate.to ? (
-              <>
-                {format(localDate.from, 'LLL dd, y')} -{' '}
-                {format(localDate.to, 'LLL dd, y')}
-              </>
-            ) : (
-              format(localDate.from, 'LLL dd, y')
-            )
-          ) : (
-            'Pick a date'
-          )}
-        </Button>
-      </PopoverTrigger>
+<PopoverTrigger asChild>
+  <Button
+    variant="outline"
+    className={cn(
+      "w-[300px] justify-start text-left font-normal flex items-center gap-2",
+      !localDate && "text-muted-foreground"
+    )}
+    onClick={() => setPopoverOpen(true)}
+  >
+    <CalendarIcon className="w-4 h-4 text-muted-foreground" />
+    {localDate?.from ? (
+      localDate.to ? (
+        <>
+          {format(localDate.from, "LLL dd, y")} -{" "}
+          {format(localDate.to, "LLL dd, y")}
+        </>
+      ) : (
+        format(localDate.from, "LLL dd, y")
+      )
+    ) : (
+      "Pick a date"
+    )}
+  </Button>
+</PopoverTrigger>
       <PopoverContent className='date-range-picker p-4'>
         <div className='flex gap-4'>
           {/* Shortcuts Sidebar */}
