@@ -13,18 +13,19 @@ import { useGetExpCat } from '@/hooks/blog/use-get-catsubcat'
 import { useGetExpenseTable } from '@/hooks/expense-table/use-get-expense-table'
 import { PaginationState } from '@tanstack/react-table'
 import { SearchIcon } from 'lucide-react'
-import { useState, useEffect } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { useEffect, useState } from 'react'
 import { DateRange } from 'react-day-picker'
 import { paidByData } from './add/page'
 import { Columns } from './expense-columns'
-import { useRouter, useSearchParams } from 'next/navigation'
 
 export default function ExpenseContainer() {
   const router = useRouter()
   const searchParams = useSearchParams()
 
-  // Initialize state from URL params
-  const [globalFilter, setGlobalFilter] = useState(searchParams.get('search') || '')
+  const [globalFilter, setGlobalFilter] = useState(
+    searchParams.get('search') || ''
+  )
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: Number(searchParams.get('page')) - 1 || 0,
     pageSize: Number(searchParams.get('pageSize')) || 10
@@ -37,13 +38,17 @@ export default function ExpenseContainer() {
     ? new Date(searchParams.get('endDate')!)
     : new Date()
 
-  const [date, setDate] = useState<DateRange | undefined>({ from: initialFrom, to: initialTo })
+  const [date, setDate] = useState<DateRange | undefined>({
+    from: initialFrom,
+    to: initialTo
+  })
 
   const [selectedCategory, setSelectedCategory] = useState<string | undefined>(
     searchParams.get('category') || undefined
   )
-  const [paidBy, setPaidBy] = useState<string | undefined>(searchParams.get('paidBy') || '')
-
+  const [paidBy, setPaidBy] = useState<string | undefined>(
+    searchParams.get('paidBy') || ''
+  )
   const {
     data: expenseData,
     isPending,
@@ -58,9 +63,9 @@ export default function ExpenseContainer() {
     paidBy,
     globalFilter
   )
-console.log("--expenseData--",expenseData)
-  const pageCount = expenseData?.data?.totalPages || 1
 
+  const pageCount = expenseData?.data?.totalPages || 1
+console.log("expenseData==",expenseData)
   const { data: expCat } = useGetExpCat()
   const expenseCategoryData = expCat?.data.data
 
@@ -77,7 +82,8 @@ console.log("--expenseData--",expenseData)
     params.set('pageSize', String(pagination.pageSize))
     params.set('page', String(pagination.pageIndex + 1))
 
-    if (date?.from) params.set('startDate', date.from.toISOString().split('T')[0])
+    if (date?.from)
+      params.set('startDate', date.from.toISOString().split('T')[0])
     if (date?.to) params.set('endDate', date.to.toISOString().split('T')[0])
     if (globalFilter) params.set('search', globalFilter)
     if (selectedCategory) params.set('category', selectedCategory)

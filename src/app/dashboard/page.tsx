@@ -1,5 +1,6 @@
 'use client'
 import { BarChartComponent } from '@/components/charts/bar-chart'
+import { LineChartComponent } from '@/components/charts/line-chart'
 import { PieChartComponent } from '@/components/charts/pie-chart'
 import DateRangePicker from '@/components/date-range-picker'
 import {
@@ -41,13 +42,15 @@ function Dashboard() {
         <CardHeader>
           <CardDescription>Total Expense</CardDescription>
           <div className='flex gap-10'>
-            <div style={{ height: '588px' }} className='w-1/2'>
+            <div style={{ height: '436px' }} className='w-1/2'>
               <PieChartComponent />
             </div>
-            <div className='w-1/2'>
+            <div style={{ height: '436px' }} className='w-1/2'>
               <BarChartComponent />
             </div>
-            {/* <LineChartComponent /> */}
+            <div style={{ height: '436px' }} className='w-1/2'>
+            <LineChartComponent  />
+            </div>
           </div>
         </CardHeader>
       </Card>

@@ -64,11 +64,7 @@ const getSubCategoryOptions = (
   }))
 }
 
-export const paidByData = [
-  'Parveen',
-  'Pawan',
-  'HR',
-]
+export const paidByData = ['Parveen', 'Pawan', 'HR']
 export default function AddExpense() {
   const form = useForm<AddExpenseForm>({
     resolver: zodResolver(AddExpenseFormSchema),
@@ -82,14 +78,14 @@ export default function AddExpense() {
       paymentMethod: '',
       paymentRemark: '',
       paidBy: '',
-      paymentRecipet:''
+      paymentRecipet: ''
     }
   })
 
   const { toast } = useToast()
   const selectedcategory = form.watch('category')
   const { data: expCat, isPending, isError, error } = useGetExpCat()
-
+  // console.log("expCat==",expCat)
   const expenseCategoryData = expCat?.data.data
 
   const categories = getCategoryOptions(expenseCategoryData)
@@ -113,11 +109,11 @@ export default function AddExpense() {
         paymentMethod: values.paymentMethod,
         paymentRemark: values.paymentRemark,
         paidBy: values.paidBy,
-        paymentRecipet:values.paymentRecipet
+        paymentRecipet: values.paymentRecipet
       }
-
+      console.log('payload==', payload)
       const response = await api.post('/expense/add', payload)
-      console.log('response:', response)
+      console.log('response---:', response)
       form.reset()
       toast({
         description: 'Expense added successfully!'
@@ -372,13 +368,33 @@ export default function AddExpense() {
                 name='paymentRecipet'
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Reciept</FormLabel>
+                    <FormLabel>Receipt</FormLabel>
                     <FormControl>
-                      <Input type='file' placeholder='' {...field} />
+                      <Input
+                        type='file'
+                        accept='image/*'
+                        onChange={e => {
+                          const file = e.target.files?.[0]
+                          if (file) {
+                            const url = URL.createObjectURL(file)
+                            console.log("urlfileupload",url)
+                            field.onChange(url)
+                          }
+                        }}
+                      />
                     </FormControl>
                     <FormDescription>
-                      Please choose reciept
+                      Please choose a receipt (image only).
                     </FormDescription>
+                    {field.value && (
+                      <div className='mt-2'>
+                        <img
+                          src={field.value}
+                          alt='Receipt Preview'
+                          className='h-32 w-auto rounded'
+                        />
+                      </div>
+                    )}
                     <FormMessage />
                   </FormItem>
                 )}

@@ -43,7 +43,7 @@ const chartConfig = {
 
 export function BarChartComponent() {
   return (
-    <Card>
+    <Card className='h-full'>
       <CardHeader className='items-center pb-0'>
         <CardTitle>Monthly Expense Chart</CardTitle>
         <CardDescription>January - December 2024</CardDescription>

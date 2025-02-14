@@ -20,5 +20,5 @@ export type ExpenseItem={
   paymentMethod: string
   remarks: string
   description: string
-  receipt:string
+  paymentRecipet:string
 }
