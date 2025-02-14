@@ -34,11 +34,14 @@
     "country-list": "^2.3.0",
     "date-fns": "^4.1.0",
     "dotenv": "^16.4.7",
+    "export-to-csv": "^1.4.0",
+    "file-saver": "^2.0.5",
     "js-cookie": "^3.0.5",
     "lucide-react": "^0.468.0",
     "next": "15.1.2",
     "next-auth": "^4.24.11",
     "next-themes": "^0.4.4",
+    "papaparse": "^5.5.2",
     "react": "^19.0.0",
     "react-day-picker": "^8.10.1",
     "react-dom": "^19.0.0",
@@ -48,6 +51,7 @@
     "tailwind-merge": "^2.5.5",
     "tailwindcss-animate": "^1.0.7",
     "use-local-storage": "^3.0.0",
+    "xlsx": "^0.18.5",
     "zod": "^3.24.1"
   },
   "devDependencies": {

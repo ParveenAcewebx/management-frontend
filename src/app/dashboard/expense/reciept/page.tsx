@@ -1,11 +1,5 @@
-import { Input } from '@/components/ui/input'
-
 const ReceiptForm = () => {
-  return (
-    <>
-      <Input className='w-96' type='file' name='recipt-file' />
-    </>
-  )
+  return <>Reciept</>
 }
 
 export default ReceiptForm

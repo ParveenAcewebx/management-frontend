@@ -10,8 +10,8 @@ export const AddExpenseFormSchema = z.object({
   amount: requiredString('Amount'),
   paymentRemark:requiredString('Remark'),
   paymentMethod:requiredString('Payment Method'),
-  paidBy:requiredString('Paid by')
-
+  paidBy:requiredString('Paid by'),
+  paymentRecipet:requiredString('Reciept')
 
 })
 

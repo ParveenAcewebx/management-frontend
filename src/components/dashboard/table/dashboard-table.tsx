@@ -1,5 +1,3 @@
-import DateRangePicker from '@/components/date-range-picker'
-import { Input } from '@/components/ui/input'
 import { Skeleton } from '@/components/ui/skeleton'
 import {
   Table,
@@ -22,11 +20,12 @@ import {
   VisibilityState
 } from '@tanstack/react-table'
 
+import { Button } from '@/components/ui/button'
+import FileSaver from 'file-saver'
+import Papa from 'papaparse'
 import { Dispatch, SetStateAction, useMemo, useState } from 'react'
-import { DateRange } from 'react-day-picker'
 import { TablePagination } from './table-pagination'
 import { TableViewOptions } from './table-view-options'
-
 type DashboardTableProps<TData> = {
   data?: TData[]
   columns: ColumnDef<TData, unknown>[]
@@ -56,7 +55,6 @@ export function DashboardTable<TData>({
   // Define selectedDate state here
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined)
 
-  
   // filter date data
   const tableData = useMemo(() => {
     if (selectedDate) {
@@ -113,10 +111,16 @@ export function DashboardTable<TData>({
   //   return data?.reduce((sum, item) => sum + (item.amount || 0), 0)
   // }, [data, isPending])
 
+  const handleExportCSV = () => {
+    const csv = Papa.unparse(data)
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' })
+    FileSaver.saveAs(blob, 'table_data.csv')
+  }
+
   return (
     <>
-      <div className=' flex items-center justify-between !gap-4'>
-        
+      <div className='flex gap-5 justify-end items-end'>
+        <Button className='' onClick={handleExportCSV}>Export CSV</Button>
         <TableViewOptions table={table} />
       </div>
       <div className='mt-4 rounded-xl bg-background p-4 shadow-sm lg:p-8'>

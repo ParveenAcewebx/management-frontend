@@ -13,27 +13,36 @@ import { useGetExpCat } from '@/hooks/blog/use-get-catsubcat'
 import { useGetExpenseTable } from '@/hooks/expense-table/use-get-expense-table'
 import { PaginationState } from '@tanstack/react-table'
 import { SearchIcon } from 'lucide-react'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { DateRange } from 'react-day-picker'
-import { Columns } from './expense-columns'
 import { paidByData } from './add/page'
+import { Columns } from './expense-columns'
+import { useRouter, useSearchParams } from 'next/navigation'
 
 export default function ExpenseContainer() {
-  const [globalFilter, setGlobalFilter] = useState('')
+  const router = useRouter()
+  const searchParams = useSearchParams()
+
+  // Initialize state from URL params
+  const [globalFilter, setGlobalFilter] = useState(searchParams.get('search') || '')
   const [pagination, setPagination] = useState<PaginationState>({
-    pageIndex: 0,
-    pageSize: 10
+    pageIndex: Number(searchParams.get('page')) - 1 || 0,
+    pageSize: Number(searchParams.get('pageSize')) || 10
   })
 
-  const [date, setDate] = useState<DateRange | undefined>({
-    from: new Date(new Date().setDate(new Date().getDate() - 12)),
-    to: new Date()
-  })
+  const initialFrom = searchParams.get('startDate')
+    ? new Date(searchParams.get('startDate')!)
+    : new Date(new Date().setDate(new Date().getDate() - 12))
+  const initialTo = searchParams.get('endDate')
+    ? new Date(searchParams.get('endDate')!)
+    : new Date()
+
+  const [date, setDate] = useState<DateRange | undefined>({ from: initialFrom, to: initialTo })
 
   const [selectedCategory, setSelectedCategory] = useState<string | undefined>(
-    undefined
+    searchParams.get('category') || undefined
   )
-  const [paidBy, setPaidBy] = useState<string | undefined>('')
+  const [paidBy, setPaidBy] = useState<string | undefined>(searchParams.get('paidBy') || '')
 
   const {
     data: expenseData,
@@ -43,21 +52,15 @@ export default function ExpenseContainer() {
   } = useGetExpenseTable(
     pagination.pageSize,
     pagination.pageIndex + 1,
-    date?.from
-      ? new Date(date.from.setHours(0, 0, 0, 0)).toISOString().split('T')[0]
-      : undefined,
-    date?.to
-      ? new Date(date.to.setHours(23, 59, 59, 999)).toISOString().split('T')[0]
-      : undefined,
+    date?.from?.toISOString().split('T')[0],
+    date?.to?.toISOString().split('T')[0],
     selectedCategory,
     paidBy,
     globalFilter
   )
-
+console.log("--expenseData--",expenseData)
   const pageCount = expenseData?.data?.totalPages || 1
-  console.log('----pageCount--', pageCount)
 
-  console.log('-expenseData---', expenseData)
   const { data: expCat } = useGetExpCat()
   const expenseCategoryData = expCat?.data.data
 
@@ -68,8 +71,23 @@ export default function ExpenseContainer() {
       value: item.categoryName
     })) || []
 
+  // Update URL parameters whenever filters change
+  useEffect(() => {
+    const params = new URLSearchParams()
+    params.set('pageSize', String(pagination.pageSize))
+    params.set('page', String(pagination.pageIndex + 1))
+
+    if (date?.from) params.set('startDate', date.from.toISOString().split('T')[0])
+    if (date?.to) params.set('endDate', date.to.toISOString().split('T')[0])
+    if (globalFilter) params.set('search', globalFilter)
+    if (selectedCategory) params.set('category', selectedCategory)
+    if (paidBy) params.set('paidBy', paidBy)
+
+    router.push(`?${params.toString()}`)
+  }, [pagination, date, globalFilter, selectedCategory, paidBy])
+
   if (isError) throw new Error(error.message)
-  console.log('---Date---', date)
+
   return (
     <>
       <div className='mt-5 flex gap-5'>
@@ -88,10 +106,9 @@ export default function ExpenseContainer() {
 
         {/* Filter Date Range Picker */}
         <DateRangePicker setDate={setDate} date={date} />
-        {/* {JSON.stringify(date)} */}
 
         {/* Filter Category */}
-        <Select onValueChange={value => setSelectedCategory(value)}>
+        <Select value={selectedCategory} onValueChange={setSelectedCategory}>
           <SelectTrigger className='w-[180px]'>
             <SelectValue placeholder='Select a category' />
           </SelectTrigger>
@@ -105,20 +122,18 @@ export default function ExpenseContainer() {
         </Select>
 
         {/* Search Paid By */}
-        <div className='relative flex items-center'>
-          <Select onValueChange={value => setPaidBy(value)}>
-            <SelectTrigger className='w-[180px]'>
-              <SelectValue placeholder='Select Paid By' />
-            </SelectTrigger>
-            <SelectContent>
-              {paidByData.map(item => (
-                <SelectItem key={item} value={item}>
-                  {item}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
+        <Select value={paidBy} onValueChange={setPaidBy}>
+          <SelectTrigger className='w-[180px]'>
+            <SelectValue placeholder='Select Paid By' />
+          </SelectTrigger>
+          <SelectContent>
+            {paidByData.map(item => (
+              <SelectItem key={item} value={item}>
+                {item}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
 
       {/* Expense Table */}
@@ -130,7 +145,7 @@ export default function ExpenseContainer() {
         setPagination={setPagination}
         globalFilter={globalFilter}
         setGlobalFilter={setGlobalFilter}
-        pageCount={pageCount} // Pass total pages from API
+        pageCount={pageCount}
       />
     </>
   )

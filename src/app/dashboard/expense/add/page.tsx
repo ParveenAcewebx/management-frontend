@@ -67,14 +67,7 @@ const getSubCategoryOptions = (
 export const paidByData = [
   'Parveen',
   'Pawan',
-  'Pankaj',
-  'Amit',
-  'Virender',
-  'Himanshu',
-  'Charu',
-  'Jashan',
-  'Navjot',
-  'Harman'
+  'HR',
 ]
 export default function AddExpense() {
   const form = useForm<AddExpenseForm>({
@@ -88,7 +81,8 @@ export default function AddExpense() {
       amount: '',
       paymentMethod: '',
       paymentRemark: '',
-      paidBy: ''
+      paidBy: '',
+      paymentRecipet:''
     }
   })
 
@@ -118,7 +112,8 @@ export default function AddExpense() {
         amount: parseFloat(values.amount),
         paymentMethod: values.paymentMethod,
         paymentRemark: values.paymentRemark,
-        paidBy: values.paidBy
+        paidBy: values.paidBy,
+        paymentRecipet:values.paymentRecipet
       }
 
       const response = await api.post('/expense/add', payload)
@@ -340,34 +335,6 @@ export default function AddExpense() {
                   </FormItem>
                 )}
               />
-              {/* <FormField
-                control={form.control}
-                name='paidBy'
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Paid by</FormLabel>
-                    <FormControl>
-                      <Select>
-                        <SelectTrigger>
-                          <SelectValue placeholder='Select Paid by' />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value='Parveen'>Parveen</SelectItem>
-                          <SelectItem value='Pawan'>Pawan</SelectItem>
-                          <SelectItem value='Pankaj'>Pankaj</SelectItem>
-                          <SelectItem value='Amit'>Amit</SelectItem>
-                          <SelectItem value='Virender'>Virender</SelectItem>
-                          <SelectItem value='Himanshu'>Himanshu</SelectItem>
-                          <SelectItem value='Charu'>Charu</SelectItem>
-                          <SelectItem value='Jashan'>Jashan</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </FormControl>
-                    <FormDescription>Please select paid by.</FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              /> */}
               <FormField
                 control={form.control}
                 name='paymentMethod'
@@ -395,6 +362,22 @@ export default function AddExpense() {
                     </FormControl>
                     <FormDescription>
                       Please enter the payment remark.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name='paymentRecipet'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Reciept</FormLabel>
+                    <FormControl>
+                      <Input type='file' placeholder='' {...field} />
+                    </FormControl>
+                    <FormDescription>
+                      Please choose reciept
                     </FormDescription>
                     <FormMessage />
                   </FormItem>

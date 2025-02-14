@@ -22,7 +22,7 @@ export function TableViewOptions<TData>({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant='outline' className='ml-auto flex active:scale-100'>
+        <Button variant='outline' className=' flex active:scale-100'>
           <MixerHorizontalIcon className='h-4 w-4' />
           View
         </Button>
